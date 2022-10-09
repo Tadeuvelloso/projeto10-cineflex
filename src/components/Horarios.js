@@ -2,19 +2,21 @@ import styled from "styled-components";
 import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-
-export default function SelecionarHorario() {
-    const [horarios, setHorarios] = useState([])
-    const [dias, setDias] = useState([])
+export default function SelecionarHorario({setDados}) {
+    const [horarios, setHorarios] = useState([]);
+    const [dias, setDias] = useState([]);
+    const { idMovie } = useParams();
 
     useEffect(() => {
-        const URL = "https://mock-api.driven.com.br/api/v5/cineflex/movies/2/showtimes";
-        const promisse = axios.get(URL);
+        const promisse = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/movies/${idMovie}/showtimes`);
 
         promisse.then(res => {
             setHorarios(res.data)
             setDias(res.data.days)
+            
         })
 
         promisse.catch((erro) => {
@@ -22,12 +24,13 @@ export default function SelecionarHorario() {
         })
         
     }, [])
+
     
     
     return (
         <Main>
             <p>Selecione o horário</p>
-            {dias.map((h) => <HoraFilme key={h.id} dia={h.weekday} data={h.date} butao1={h.showtimes[0].name} butao2={h.showtimes[1].name} />)}
+            {dias.map((h) => <HoraFilme key={h.id} dia={h.weekday} data={h.date} dado={horarios.id} botao1={h.showtimes[0].name} botao2={h.showtimes[1].name} />)}
             <DadosFilme>
                 <img src={horarios.posterURL} />
                 <p>{horarios.title}</p>        
@@ -39,12 +42,20 @@ export default function SelecionarHorario() {
 
 function HoraFilme(props){
     return(
-        <Dia> <p>{props.dia} - {props.data}</p>
+        <Dia> 
+            <p>{props.dia} - {props.data}</p>
                <div>
-                    <BotaoHora>{props.botao1}</BotaoHora>
-                    <BotaoHora>{props.botao2}</BotaoHora>
-               </div>
-               
+               <Link to={`/assentos/${props.dado}`}>
+                    <BotaoHora>
+                        <p>{props.botao1}</p>
+                    </BotaoHora>
+                </Link>
+                <Link to={`/assentos/${props.dado}`}>
+                    <BotaoHora>
+                        <p>{props.botao2}</p>
+                    </BotaoHora>
+                </Link>
+               </div>      
         </Dia>
         
     )
@@ -76,18 +87,31 @@ const Dia = styled.div`
     
 `
 const BotaoHora = styled.div`
-color:black;
+
 background-color: #E8833A;
 width: 83px;
 height: 43px;
 border-radius: 3px;
 margin: 3px;
+display: flex;
+justify-content: center;
+align-items: center;
+text-decoration: none;
+    p{
+        color:black;
+        font-size: 18px;
+        
+    }
+    :hover{
+        cursor: pointer;
+    }
+   
 `
 const DadosFilme = styled.div`
 margin: 30px 0px;
 width:100%;
 height: 117px;
-background-color: #9EADBA;
+background-color: #DFE6ED;
 display: flex;
 box-sizing: border-box;
 padding: 10px;

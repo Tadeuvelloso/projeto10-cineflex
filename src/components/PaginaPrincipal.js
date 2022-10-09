@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import gif from "../img/200.gif"
+import { Link } from "react-router-dom"
 
 export default function PaginaInicial(props) {
     const { filmes } = props
@@ -17,7 +18,8 @@ export default function PaginaInicial(props) {
         <Main>
             <p>Selecione o Filme</p>
             <Filmes>
-                {filmes.map((filme) => <Filme key={filme.id}><img src={filme.posterURL}/></Filme>)}
+                {filmes.map((filme) => <Filme key={filme.id}><Link to={`/horarios/${filme.id}`}><img src={filme.posterURL}/></Link></Filme>)}
+                
             </Filmes>
         </Main>
     )
