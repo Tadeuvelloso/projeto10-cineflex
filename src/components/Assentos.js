@@ -44,11 +44,17 @@ export default function SelecionarAssento({setDados, setPlaces, setDocumento, se
         setDocumento(clienteCpf)
         setPlaces([...dadosCadeira]);
 
+        if(cadeiraEscolhida.length === 0){
+            alert("Selecione algum lugar!")
+            return
+        }
+
         const requisicao = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", {
             ids: cadeiraEscolhida,
             name: clienteNome,
             cpf: clienteCpf
         });
+        
 
         navigate("/sucesso")
     }
@@ -95,18 +101,23 @@ export default function SelecionarAssento({setDados, setPlaces, setDocumento, se
 function Cadeira({ setCadeiraEscolhida, cadeiraEscolhida, status, assento, livre, setDadosCadeira, dadosCadeira}) {
 
     function escolheCadeira(seat) {
-        console.log(seat)
+        
         if (!seat.isAvailable) {
             return
+        }
+        if (dadosCadeira.includes(seat.name)){
+            const filterCadeiras = dadosCadeira.filter((s) => !(s === seat.name));
+            setDadosCadeira([...filterCadeiras]);
+            
         }
 
         if (cadeiraEscolhida.includes(seat.id)) {
             const filteredSeats = cadeiraEscolhida.filter((s) => !(s === seat.id));
-            setCadeiraEscolhida([...filteredSeats]);
-            
-            return;
+            setCadeiraEscolhida([...filteredSeats]);  
+            return
         }
-        console.log(cadeiraEscolhida)
+        
+        
         setCadeiraEscolhida([...cadeiraEscolhida, seat.id])
         setDadosCadeira([...dadosCadeira, seat.name])
     }
