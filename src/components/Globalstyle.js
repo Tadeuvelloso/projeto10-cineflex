@@ -126,7 +126,9 @@ table {
     border-collapse: collapse;
   border-spacing: 0;
 }
-
+link{
+  text-decoration: none;
+}
 `
 
 export default GlobalStyle

@@ -6,7 +6,7 @@ import axios from "axios"
 import { useState, useEffect } from "react"
 import SelecionarHorario from "./components/Horarios"
 import SelecionarAssento from "./components/Assentos"
-
+import Sucesso from "./components/Final"
 
 export default function App (){
     const [filmes, setFilmes] = useState([])
@@ -33,7 +33,8 @@ export default function App (){
             <Routes>
                 <Route path="/" element={<PaginaIncial filmes={filmes}/>}/>
                 <Route path="/horarios/:idMovie" element={<SelecionarHorario setDados={setDados}/>} />
-                <Route path="/assentos/:idSessao" element={<SelecionarAssento/>}/>
+                <Route path="/assentos/:idSessao" element={<SelecionarAssento dados={dados} setDados={setDados}/>}/>
+                <Route path="/sucesso" element={<Sucesso />}/>
             </Routes>
         </BrowserRouter>
     )

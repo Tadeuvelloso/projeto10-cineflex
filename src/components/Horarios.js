@@ -30,7 +30,7 @@ export default function SelecionarHorario({setDados}) {
     return (
         <Main>
             <p>Selecione o horário</p>
-            {dias.map((h) => <HoraFilme key={h.id} dia={h.weekday} data={h.date} dado={horarios.id} botao1={h.showtimes[0].name} botao2={h.showtimes[1].name} />)}
+            {dias.map((h) => <HoraFilme key={h.id} dia={h.weekday} data={h.date} dado={horarios.id} botao1={h.showtimes[0].name}  botao2={h.showtimes[1].name} />)}
             <DadosFilme>
                 <img src={horarios.posterURL} />
                 <p>{horarios.title}</p>        
@@ -41,17 +41,18 @@ export default function SelecionarHorario({setDados}) {
 }   
 
 function HoraFilme(props){
+
     return(
         <Dia> 
             <p>{props.dia} - {props.data}</p>
                <div>
                <Link to={`/assentos/${props.dado}`}>
-                    <BotaoHora>
+                    <BotaoHora >
                         <p>{props.botao1}</p>
                     </BotaoHora>
                 </Link>
                 <Link to={`/assentos/${props.dado}`}>
-                    <BotaoHora>
+                    <BotaoHora >
                         <p>{props.botao2}</p>
                     </BotaoHora>
                 </Link>
@@ -84,7 +85,9 @@ const Dia = styled.div`
     div{
         display: flex;
     }
-    
+    link{
+        text-decoration: none;
+    }
 `
 const BotaoHora = styled.div`
 
@@ -96,16 +99,17 @@ margin: 3px;
 display: flex;
 justify-content: center;
 align-items: center;
-text-decoration: none;
+
+
     p{
-        color:black;
+        color:white;
         font-size: 18px;
-        
+        text-decoration: none;
     }
     :hover{
         cursor: pointer;
     }
-   
+    
 `
 const DadosFilme = styled.div`
 margin: 30px 0px;
