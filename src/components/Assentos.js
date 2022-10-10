@@ -1,60 +1,79 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from "styled-components";
 
-export default function SelecionarAssento ({dados, setDados}){
-    const { idSessao} = useParams()
+
+export default function SelecionarAssento({setDados, setPlaces, setDocumentos, setIdentidade}) {
+    const { idSessao } = useParams()
     const [info, setInfo] = useState([])
     const [leg, setLeg] = useState([])
     const [hora, setHora] = useState([])
     const [nome, setNome] = useState([])
+    const [clienteNome, setClienteNome] = useState("")
+    const [clienteCpf, setClienteCpf] = useState("")
+    const [cadeiraEscolhida, setCadeiraEscolhida] = useState([])
+
 
     useEffect(() => {
-    const URL = `https://mock-api.driven.com.br/api/v5/cineflex/showtimes/${idSessao}/seats`
-    const promisse = axios.get(URL)
-    
-    promisse.then(res => {
-        setInfo(res.data.seats)
-        setLeg(res.data.movie)
-        setHora(res.data.day)
-        setNome(res.data.name)
-    })
+        const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
+        const promisse = axios.get(URL)
+        setDados(URL)
 
-    promisse.catch((erro) => {
-        console.log(erro.response.data)
-    })
-    
+
+        promisse.then(res => {
+            setInfo(res.data.seats)
+            setLeg(res.data.movie)
+            setHora(res.data.day)
+            setNome(res.data.name)
+        })
+
+        promisse.catch((erro) => {
+            console.log(erro.response.data)
+        })
+
     }, [])
-    
-    
 
-    return(
+
+    function enviarDados (event){
+        event.preventDefault()
+        setIdentidade(clienteNome)
+        setDocumentos(clienteCpf)
+       
+        const requisicao = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", {
+            ids: cadeiraEscolhida,
+            name: clienteNome,
+            cpf: clienteCpf
+        });
+        useNavigate("/sucesso")
+    }
+    
+    return (
         <Main>
             <p>Selecione o(s) assento(s)</p>
             <Lugares>
-                {info.map((a) => <Cadeira key={a.id} assento={a.name}/>)}
+                {info.map((a) => <Cadeira setCadeiraEscolhida={setCadeiraEscolhida} cadeiraEscolhida={cadeiraEscolhida} livre={a.isAvailable} status={a} key={a.id} assento={a.name} />)}
             </Lugares>
             <Legenda>
                 <div>
-                    <Verde/>
+                    <Verde />
                     <p>Selecionado</p>
                 </div>
                 <div>
-                    <Cinza/>
+                    <Cinza />
                     <p>Disponível</p>
                 </div>
                 <div>
-                    <Amarelo/>
+                    <Amarelo />
                     <p>Indiponível</p>
                 </div>
             </Legenda>
-            <Formulario>
+            <Formulario onSubmit={enviarDados}>
                 <p>Nome do comprador</p>
-                <input type="text" required placeholder="Digite seu nome..."/>
+                <input type="text" value={clienteNome} onChange={e => setClienteNome(e.target.value)} required placeholder="Digite seu nome..." />
                 <p>CPF do comprador:</p>
-                <input type="tel" required placeholder="Digite seu CPF..." pattern="[0-9]{11}"/>
-                <button type="subimit">Reservar assento(s)</button>
+                <input type="tel" value={clienteCpf} onChange={e => setClienteCpf(e.target.value)} required placeholder="Digite seu CPF..." pattern="[0-9]{11}" />
+                <button type="subimit">Reservar assento(s)</button> 
             </Formulario>
             <Footer>
                 <img src={leg.posterURL} />
@@ -62,18 +81,45 @@ export default function SelecionarAssento ({dados, setDados}){
                     <p>{leg.title}</p>
                     <p>{hora.weekday} - {nome}</p>
                 </div>
-                
+
             </Footer>
         </Main>
     )
 }
 
-function Cadeira (props){
-    return(
-        <Lugar>
-            {props.assento}
+function Cadeira({ setCadeiraEscolhida, cadeiraEscolhida, status, assento, livre }) {
+
+    function escolheCadeira(seat) {
+        console.log(seat)
+        if (!seat.isAvailable) {
+            return
+        }
+
+        if (cadeiraEscolhida.includes(seat.id)) {
+            const filteredSeats = cadeiraEscolhida.filter((s) => !(s === seat.id));
+            setCadeiraEscolhida([...filteredSeats]);
+            setPlaces([...filteredSeats]);
+            return;
+        }
+        console.log(cadeiraEscolhida)
+        setCadeiraEscolhida([...cadeiraEscolhida, seat.id])
+        console.log(cadeiraEscolhida)
+    }
+
+    function cor() {
+        switch (livre) {
+            case true: return `#C3CFD9`
+            case false: return `#FBE192`
+        }
+    }
+
+    return (
+
+        <Lugar cor={cor()} num={status.id} selecionado={cadeiraEscolhida} onClick={() => escolheCadeira(status)}>
+            {assento}
         </Lugar>
-        
+
+
     )
 }
 
@@ -104,7 +150,7 @@ const Lugar = styled.div`
 height: 26px;
 width: 26px;
 border-radius: 12px;
-background-color: #C3CFD9;
+background-color: ${props => props.selecionado.includes(props.num) ? `#1AAE9E` : props.cor};
 display: flex;
 justify-content: center;
 align-items: center;
@@ -115,6 +161,7 @@ border: 0.5px solid #808F9D;
     :hover{
         cursor: pointer;
     }
+
 `
 const Footer = styled.div`
 width: 100%;
@@ -161,7 +208,6 @@ margin-bottom:-40px;
         margin-left: -5px;
     }
 `
-
 const Bola = styled.div`
 width: 25px;
 height: 25px;
@@ -207,5 +253,6 @@ const Formulario = styled.form`
         align-items: center;
         border:none;
         margin:40px auto;
+        cursor: pointer;
     }
 `

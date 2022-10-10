@@ -18,8 +18,7 @@ export default function PaginaInicial(props) {
         <Main>
             <p>Selecione o Filme</p>
             <Filmes>
-                {filmes.map((filme) => <Filme key={filme.id}><Link to={`/horarios/${filme.id}`}><img src={filme.posterURL}/></Link></Filme>)}
-                
+                {filmes.map((filme) => <Filme key={filme.id}><Link to={`/horarios/${filme.id}`}><img src={filme.posterURL}/></Link></Filme>)} 
             </Filmes>
         </Main>
     )

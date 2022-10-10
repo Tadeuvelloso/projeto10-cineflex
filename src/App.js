@@ -13,7 +13,7 @@ export default function App (){
     const [dados, setDados] = ([])
 
     useEffect(() => {
-    const URL = "https://mock-api.driven.com.br/api/v5/cineflex/movies"
+    const URL = "https://mock-api.driven.com.br/api/v8/cineflex/movies"
     const promisse = axios.get(URL)
 
     promisse.then(res => {
@@ -32,7 +32,7 @@ export default function App (){
             <Navbar />
             <Routes>
                 <Route path="/" element={<PaginaIncial filmes={filmes}/>}/>
-                <Route path="/horarios/:idMovie" element={<SelecionarHorario setDados={setDados}/>} />
+                <Route path="/horarios/:idMovie" element={<SelecionarHorario setDados={setDados} dados={dados}/>} />
                 <Route path="/assentos/:idSessao" element={<SelecionarAssento dados={dados} setDados={setDados}/>}/>
                 <Route path="/sucesso" element={<Sucesso />}/>
             </Routes>

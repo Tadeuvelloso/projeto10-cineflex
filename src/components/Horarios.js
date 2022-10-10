@@ -5,13 +5,13 @@ import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
 
-export default function SelecionarHorario({setDados}) {
+export default function SelecionarHorario({setDados, dados}) {
     const [horarios, setHorarios] = useState([]);
     const [dias, setDias] = useState([]);
     const { idMovie } = useParams();
 
     useEffect(() => {
-        const promisse = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/movies/${idMovie}/showtimes`);
+        const promisse = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/movies/${idMovie}/showtimes`);
 
         promisse.then(res => {
             setHorarios(res.data)
@@ -30,8 +30,8 @@ export default function SelecionarHorario({setDados}) {
     return (
         <Main>
             <p>Selecione o horário</p>
-            {dias.map((h) => <HoraFilme key={h.id} dia={h.weekday} data={h.date} dado={horarios.id} botao1={h.showtimes[0].name}  botao2={h.showtimes[1].name} />)}
-            <DadosFilme>
+            {dias.map((h) => <HoraFilme key={h.id} dado1={h.showtimes[0].id} dado2={h.showtimes[1].id} dia={h.weekday} data={h.date} botao1={h.showtimes[0].name}  botao2={h.showtimes[1].name} />)}
+            <DadosFilme >
                 <img src={horarios.posterURL} />
                 <p>{horarios.title}</p>        
             </DadosFilme>
@@ -40,22 +40,23 @@ export default function SelecionarHorario({setDados}) {
     )
 }   
 
-function HoraFilme(props){
+function HoraFilme({dia, data, botao1, botao2, dado1, dado2}){
+   
 
     return(
         <Dia> 
-            <p>{props.dia} - {props.data}</p>
+            <p>{dia} - {data}</p>
                <div>
-               <Link to={`/assentos/${props.dado}`}>
+                <Link to={`/assentos/${dado1}`}> 
                     <BotaoHora >
-                        <p>{props.botao1}</p>
+                        <p>{botao1}</p>
                     </BotaoHora>
-                </Link>
-                <Link to={`/assentos/${props.dado}`}>
+                 </Link> 
+                 <Link to={`/assentos/${dado2}`}> 
                     <BotaoHora >
-                        <p>{props.botao2}</p>
+                        <p>{botao2}</p>
                     </BotaoHora>
-                </Link>
+                 </Link> 
                </div>      
         </Dia>
         
@@ -90,7 +91,6 @@ const Dia = styled.div`
     }
 `
 const BotaoHora = styled.div`
-
 background-color: #E8833A;
 width: 83px;
 height: 43px;
@@ -99,7 +99,6 @@ margin: 3px;
 display: flex;
 justify-content: center;
 align-items: center;
-
 
     p{
         color:white;
