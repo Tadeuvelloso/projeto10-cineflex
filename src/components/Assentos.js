@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from "styled-components";
 
 
-export default function SelecionarAssento({setDados, setPlaces, setDocumentos, setIdentidade}) {
+export default function SelecionarAssento({setDados, setPlaces, setDocumento, setIdentidade}) {
     const { idSessao } = useParams()
     const [info, setInfo] = useState([])
     const [leg, setLeg] = useState([])
@@ -13,7 +13,9 @@ export default function SelecionarAssento({setDados, setPlaces, setDocumentos, s
     const [clienteNome, setClienteNome] = useState("")
     const [clienteCpf, setClienteCpf] = useState("")
     const [cadeiraEscolhida, setCadeiraEscolhida] = useState([])
+    const [dadosCadeira, setDadosCadeira] = useState([])
 
+    const navigate = useNavigate();
 
     useEffect(() => {
         const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
@@ -34,25 +36,28 @@ export default function SelecionarAssento({setDados, setPlaces, setDocumentos, s
 
     }, [])
 
+    
 
     function enviarDados (event){
         event.preventDefault()
         setIdentidade(clienteNome)
-        setDocumentos(clienteCpf)
-       
+        setDocumento(clienteCpf)
+        setPlaces([...dadosCadeira]);
+
         const requisicao = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", {
             ids: cadeiraEscolhida,
             name: clienteNome,
             cpf: clienteCpf
         });
-        useNavigate("/sucesso")
+
+        navigate("/sucesso")
     }
     
     return (
         <Main>
             <p>Selecione o(s) assento(s)</p>
             <Lugares>
-                {info.map((a) => <Cadeira setCadeiraEscolhida={setCadeiraEscolhida} cadeiraEscolhida={cadeiraEscolhida} livre={a.isAvailable} status={a} key={a.id} assento={a.name} />)}
+                {info.map((a) => <Cadeira setCadeiraEscolhida={setCadeiraEscolhida} dadosCadeira={dadosCadeira} setDadosCadeira={setDadosCadeira} cadeiraEscolhida={cadeiraEscolhida} livre={a.isAvailable} status={a} key={a.id} assento={a.name} />)}
             </Lugares>
             <Legenda>
                 <div>
@@ -87,7 +92,7 @@ export default function SelecionarAssento({setDados, setPlaces, setDocumentos, s
     )
 }
 
-function Cadeira({ setCadeiraEscolhida, cadeiraEscolhida, status, assento, livre }) {
+function Cadeira({ setCadeiraEscolhida, cadeiraEscolhida, status, assento, livre, setDadosCadeira, dadosCadeira}) {
 
     function escolheCadeira(seat) {
         console.log(seat)
@@ -98,12 +103,12 @@ function Cadeira({ setCadeiraEscolhida, cadeiraEscolhida, status, assento, livre
         if (cadeiraEscolhida.includes(seat.id)) {
             const filteredSeats = cadeiraEscolhida.filter((s) => !(s === seat.id));
             setCadeiraEscolhida([...filteredSeats]);
-            setPlaces([...filteredSeats]);
+            
             return;
         }
         console.log(cadeiraEscolhida)
         setCadeiraEscolhida([...cadeiraEscolhida, seat.id])
-        console.log(cadeiraEscolhida)
+        setDadosCadeira([...dadosCadeira, seat.name])
     }
 
     function cor() {

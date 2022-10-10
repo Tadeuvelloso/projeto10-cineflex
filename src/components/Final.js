@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Navigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useEffect, useState } from "react"
 
@@ -8,13 +8,18 @@ export default function Sucesso({dados, places, identidade, documento}){
 
     const[datahr, setDatahr] = useState([])
     const[titulo, setTitulo] = useState([])
+    const[semana, setSemana] = useState([])
+
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const promisse = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/movies/${dados}/showtimes`);
+        const promisse = axios.get(dados);
 
         promisse.then(res => {
-            setDatahr(res.data.movie)
-            setTitulo(res.data.day)
+            console.log(res.data)
+            setDatahr(res.data)
+            setTitulo(res.data.movie)
+            setSemana(res.data.day)
         })
 
         promisse.catch((erro) => {
@@ -24,7 +29,7 @@ export default function Sucesso({dados, places, identidade, documento}){
     }, [])
 
     function voltaHome (){
-        Navigate("/")
+        navigate("/")
     }
 
     return(
@@ -32,8 +37,8 @@ export default function Sucesso({dados, places, identidade, documento}){
             <h2>Pedido feito com sucesso!</h2>
             <Padrão>
                 <h1>Filme e sessão</h1>
-                <p>{}</p>
-                <p>{titulo.week} - Horarios</p>
+                <p>{titulo.title}</p>
+                <p>{semana.weekday} - {datahr.name}</p>
             </Padrão>
             <Padrão>
                 <h1>Ingressos</h1>
@@ -41,8 +46,8 @@ export default function Sucesso({dados, places, identidade, documento}){
             </Padrão>
             <Padrão>
                 <h1>Comprador</h1>
-                <p>Nome:</p>
-                <p>CPF:</p>
+                <p>Nome: {identidade}</p>
+                <p>CPF: {documento}</p>
             </Padrão>
             <button onClick={voltaHome}>Voltar pra Home</button>
         </Main>
@@ -82,6 +87,7 @@ font-family: "roboto", sans-serif;
         align-items: center;
         border:none;
         margin:60px auto;
+        cursor: pointer;
     }
 
     p{

@@ -8,9 +8,13 @@ import SelecionarHorario from "./components/Horarios"
 import SelecionarAssento from "./components/Assentos"
 import Sucesso from "./components/Final"
 
+
 export default function App (){
     const [filmes, setFilmes] = useState([])
-    const [dados, setDados] = ([])
+    const [dados, setDados] = useState("")
+    const [places, setPlaces] = useState([])
+    const [documento, setDocumento] = useState("")
+    const [identidade, setIdentidade] = useState("")
 
     useEffect(() => {
     const URL = "https://mock-api.driven.com.br/api/v8/cineflex/movies"
@@ -32,9 +36,9 @@ export default function App (){
             <Navbar />
             <Routes>
                 <Route path="/" element={<PaginaIncial filmes={filmes}/>}/>
-                <Route path="/horarios/:idMovie" element={<SelecionarHorario setDados={setDados} dados={dados}/>} />
-                <Route path="/assentos/:idSessao" element={<SelecionarAssento dados={dados} setDados={setDados}/>}/>
-                <Route path="/sucesso" element={<Sucesso />}/>
+                <Route path="/horarios/:idMovie" element={<SelecionarHorario/>} />
+                <Route path="/assentos/:idSessao" element={<SelecionarAssento setPlaces={setPlaces} setDados={setDados} setDocumento={setDocumento} setIdentidade={setIdentidade}/>}/>
+                <Route path="/sucesso" element={<Sucesso dados={dados} places={places} documento={documento} identidade={identidade}/>}/>
             </Routes>
         </BrowserRouter>
     )
