@@ -2,9 +2,9 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from "styled-components";
+import seta from "../img/images.jpg"
 
-
-export default function SelecionarAssento({setDados, setPlaces, setDocumento, setIdentidade}) {
+export default function SelecionarAssento({setDados, setPlaces, setDocumento, setIdentidade, idhorario}) {
     const { idSessao } = useParams()
     const [info, setInfo] = useState([])
     const [leg, setLeg] = useState([])
@@ -22,7 +22,6 @@ export default function SelecionarAssento({setDados, setPlaces, setDocumento, se
         const promisse = axios.get(URL)
         setDados(URL)
 
-
         promisse.then(res => {
             setInfo(res.data.seats)
             setLeg(res.data.movie)
@@ -37,7 +36,6 @@ export default function SelecionarAssento({setDados, setPlaces, setDocumento, se
     }, [])
 
     
-
     function enviarDados (event){
         event.preventDefault()
         setIdentidade(clienteNome)
@@ -59,8 +57,13 @@ export default function SelecionarAssento({setDados, setPlaces, setDocumento, se
         navigate("/sucesso")
     }
     
+    function voltar (){
+        navigate(`/horarios/${idhorario}`)
+    }
+
     return (
         <Main>
+            <Seta src={seta} onClick={() => voltar()}/>
             <p>Selecione o(s) assento(s)</p>
             <Lugares>
                 {info.map((a) => <Cadeira setCadeiraEscolhida={setCadeiraEscolhida} dadosCadeira={dadosCadeira} setDadosCadeira={setDadosCadeira} cadeiraEscolhida={cadeiraEscolhida} livre={a.isAvailable} status={a} key={a.id} assento={a.name} />)}
@@ -146,13 +149,21 @@ const Main = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-
+    position: relative;
     p{
         font-size: 24px;
         color: #293845;
         font-family: "Roboto", sans-serif;
         margin-bottom: 50px;
     }
+`
+const Seta = styled.img`
+    height: 20px;
+    width: 30px;
+    position: absolute;
+    top:-32px;
+    left: 0px;
+    cursor: pointer;
 `
 const Lugares = styled.div`
 width: 100%;

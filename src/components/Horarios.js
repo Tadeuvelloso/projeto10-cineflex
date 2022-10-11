@@ -4,12 +4,15 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
+import seta from "../img/images.jpg"
 
-export default function SelecionarHorario() {
+export default function SelecionarHorario({setIdhorarios}) {
     const [horarios, setHorarios] = useState([]);
     const [dias, setDias] = useState([]);
     const { idMovie } = useParams();
-
+    const navigate = useNavigate();
+    setIdhorarios(idMovie);
     useEffect(() => {
         const promisse = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/movies/${idMovie}/showtimes`);
 
@@ -25,10 +28,13 @@ export default function SelecionarHorario() {
         
     }, [])
 
-    
+    function voltar (){
+        navigate("/")
+    }
     
     return (
         <Main>
+            <Seta src={seta} onClick={() => voltar()}/>
             <p>Selecione o horário</p>
             {dias.map((h) => <HoraFilme key={h.id} dado1={h.showtimes[0].id} dado2={h.showtimes[1].id} dia={h.weekday} data={h.date} botao1={h.showtimes[0].name}  botao2={h.showtimes[1].name} />)}
             <DadosFilme >
@@ -69,12 +75,22 @@ const Main = styled.div`
 width: 400px;
 height: auto;
 margin: auto;
+position: relative;
     p{
         font-size: 21px;
         color: #293845;
-        margin: 40px 50px;
+        margin: 50px 30px;
         font-family: 'Roboto', sans-serif;
     }
+    
+`
+const Seta = styled.img`
+    height: 20px;
+    width: 30px;
+    position: absolute;
+    top:-32px;
+    left: 0px;
+    cursor: pointer;
 `
 const Dia = styled.div`
     p {
